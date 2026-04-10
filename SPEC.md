@@ -134,6 +134,128 @@ This implies:
 - Tests must validate behavior, not implementation
 - Two green generations are equally valid outputs
 
+## LEAP for UI / frontend projects
+
+Frontend projects extend the base LEAP structure with one additional directory and different test types.
+
+### Extended structure
+
+```
+project-root/
+├── master.md
+├── design/                  # ADDITIONAL — the visual source of truth
+│   ├── tokens.json          # design tokens (colors, spacing, typography)
+│   ├── references/          # reference images, one per component/state
+│   │   ├── button-default.png
+│   │   ├── button-hover.png
+│   │   ├── button-disabled.png
+│   │   ├── card-mobile.png
+│   │   └── card-desktop.png
+│   └── figma.json           # OPTIONAL — Figma export for traceability
+├── schemas/
+├── parts/
+│   └── button/
+│       ├── master.md
+│       ├── schema.ts        # component props / API contract
+│       └── states.json      # which reference images apply to which states
+├── tests/
+│   ├── visual/              # pixel-diff tests against references
+│   ├── interaction/         # click, hover, keyboard, focus behavior
+│   └── a11y/                # accessibility guardrails (WCAG)
+└── src/                     # gitignored
+```
+
+### The design/ directory
+
+The `design/` directory is the UI equivalent of `schemas/` — it's the source of truth for what the UI must produce.
+
+**Required files:**
+- `design/tokens.json` — machine-readable design system (colors, spacing, typography, radius, shadows). Any format is acceptable (Style Dictionary, raw JSON, etc.) as long as prompts and tests can consume it.
+- `design/references/` — reference images. One per component per visual state. Format: PNG (pixel comparison) or SVG (scalable comparison).
+
+**Optional files:**
+- `design/figma.json` — exported Figma document for traceability
+- `design/breakpoints.json` — responsive breakpoints and which references apply at each
+
+### Test types for UI
+
+UI projects use three test categories instead of the usual one:
+
+**1. Visual regression tests (`tests/visual/`)**
+
+The primary correctness signal for UI. Tests render the component in a headless browser and compare pixel output against a reference image.
+
+```ts
+test("button default matches reference", async ({ page }) => {
+  await page.goto("/button?variant=primary&state=default");
+  await expect(page).toHaveScreenshot("button-default.png", {
+    maxDiffPixelRatio: 0.01
+  });
+});
+```
+
+**Rules:**
+- Every component state in `design/references/` must have a corresponding visual test
+- Use explicit pixel diff thresholds, not exact matching (accounts for font rendering)
+- Pin the test browser version to eliminate cross-browser drift
+
+**2. Interaction tests (`tests/interaction/`)**
+
+Behavioral tests for what happens when users interact with the component.
+
+```ts
+test("button fires onClick once per click", async ({ page }) => {
+  // ... behavior assertion
+});
+```
+
+**3. Accessibility tests (`tests/a11y/`)**
+
+WCAG compliance, keyboard navigation, screen reader semantics.
+
+```ts
+test("button meets WCAG AA contrast", async ({ page }) => {
+  const results = await runAxe(page);
+  expect(results.violations).toEqual([]);
+});
+```
+
+### Banned test patterns for UI
+
+- ❌ **DOM snapshot tests** — lock implementation, forbid regeneration
+- ❌ **Class name assertions** — couple tests to CSS approach
+- ❌ **Rendered HTML string comparisons** — same problem
+- ❌ **Tests that check for specific framework idioms** (e.g., "is this a React.forwardRef")
+
+All of these lock implementation and prevent LEAP's core promise: the AI can choose any valid implementation.
+
+### Responsive and multi-state references
+
+Components with multiple states or breakpoints need references for each combination. Convention:
+
+```
+design/references/
+├── button-primary-default.png
+├── button-primary-hover.png
+├── button-primary-focus.png
+├── button-primary-disabled.png
+├── button-primary-default@mobile.png
+└── button-primary-default@desktop.png
+```
+
+Each filename corresponds to one visual test case.
+
+### The pixel-perfect promise
+
+LEAP's claim for UI: if the references exist and the visual tests pass, the implementation is correct — regardless of which framework, CSS approach, or DOM structure was used.
+
+This unlocks:
+- **Framework portability** — same specs, generated to React/Vue/Svelte
+- **Design system migrations** — update tokens, regenerate, done
+- **CSS approach changes** — swap Tailwind for vanilla CSS without rewriting components
+
+See [PIXEL_PERFECT.md](PIXEL_PERFECT.md) for the full methodology.
+
 ## Compliance checklist
 
 A repository is LEAP-compliant if:
@@ -146,6 +268,16 @@ A repository is LEAP-compliant if:
 - [ ] Running the LEAP generation flow produces passing tests
 - [ ] No application code is committed to the repo
 
+For UI projects, additionally:
+
+- [ ] `design/tokens.json` exists
+- [ ] `design/references/` contains at least one reference image per component state
+- [ ] `tests/visual/` contains pixel-diff tests for every reference
+- [ ] No DOM snapshot tests or class-name assertions
+
 ## Version
 
-LEAP Spec v0.1 — April 2026
+LEAP Spec v0.2 — April 2026
+
+- v0.2 — Added UI / frontend extension (design/, visual/interaction/a11y tests)
+- v0.1 — Initial spec

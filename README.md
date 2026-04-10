@@ -81,6 +81,7 @@ claude "build the app, start from master.md"
 Read [SPEC.md](SPEC.md) for the project structure.
 Read [MANIFESTO.md](MANIFESTO.md) for the philosophy.
 Read [AGENTS.md](AGENTS.md) if you use a non-Claude agent.
+Read [PIXEL_PERFECT.md](PIXEL_PERFECT.md) if you're building UI.
 
 ## Examples
 

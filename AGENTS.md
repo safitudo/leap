@@ -149,6 +149,49 @@ src/                # GITIGNORED — you generate this
 - If a specific part's prompt changed — regenerate that part only
 - After any generation — run all tests
 
+## UI / frontend projects
+
+If the project has a `design/` directory at the root, it is a LEAP UI project. Different rules apply:
+
+### `design/` is the visual source of truth
+
+- `design/tokens.json` — design system (colors, spacing, typography). Consume these in your generated code.
+- `design/references/` — reference images. These are test fixtures, not documentation.
+- `design/figma.json` — optional Figma export for traceability.
+
+### Test types for UI
+
+UI projects have three test categories. Make all of them pass.
+
+1. **`tests/visual/`** — pixel-diff tests against reference images. The primary correctness signal.
+2. **`tests/interaction/`** — behavior when users click, hover, type, focus.
+3. **`tests/a11y/`** — accessibility compliance (WCAG, keyboard nav, screen readers).
+
+### Banned patterns for UI
+
+Never write or accept these in a UI LEAP project:
+
+- ❌ **DOM snapshot tests** — they lock implementation, forbid regeneration
+- ❌ **Class name assertions** — they couple tests to a specific CSS approach
+- ❌ **Rendered HTML string comparisons** — same problem
+- ❌ **Tests that check framework-specific internals** (e.g., "is this a React.forwardRef")
+
+If you encounter these in a project, flag them to the user as LEAP anti-patterns.
+
+### When generating UI code
+
+- You are free to choose any framework, CSS approach, or DOM structure UNLESS `master.md` constrains you
+- Consume `design/tokens.json` — do not hardcode colors, spacing, or fonts
+- Match the rendered output to `design/references/*.png` — the visual tests will verify this
+- Iterate on failing visual tests: render the component, check the diff, adjust
+- Do not mock the browser for visual tests — they must run in a real headless browser
+
+### Pixel diffing
+
+- Use `maxDiffPixelRatio` thresholds, not exact pixel matches (accounts for font rendering)
+- Typical threshold: 0.01 (1% of pixels may differ)
+- Pin the browser version in CI to eliminate cross-browser drift
+
 ---
 
 **Learn more:** [github.com/safitudo/leap](https://github.com/safitudo/leap)
