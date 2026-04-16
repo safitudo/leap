@@ -109,6 +109,13 @@ LEAP is betting that **the spec is the thing**. Code is what falls out.
 
 MIT
 
-## Coming soon
+## Roadmap & contributing
+
+- **[ROADMAP.md](./ROADMAP.md)** — what's proven, what's in flight, and the unsolved front (UI / pixel-perfect). Open invitations for library stunts, cross-model verification, and UI experiments.
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** — how to propose SPEC/MANIFESTO edits, submit examples, or port another library as a stunt.
+- **[Discussions](https://github.com/safitudo/leap/discussions)** — open-ended questions, counter-arguments, "what if LEAP worked like X?"
+- **Issues** — actionable proposals and bugs in the methodology.
+
+## Home
 
 [leapagentic.io](https://leapagentic.io) — the home of LEAP.
