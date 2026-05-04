@@ -98,6 +98,12 @@ A LEAP-compatible agent MUST NOT:
 - Skip tests or declare them optional
 - Ask clarifying questions before attempting generation (attempt first, ask only when truly blocked)
 
+## Architectural exemptions
+
+When a discipline rule is added to mitigate a bug class, document any target or part that is **structurally exempt** — i.e., its architecture makes the bug impossible. Exemptions belong in the rule itself, not in a separate addendum.
+
+Example: a "splice-site PC rebase" rule for VDBE-style emitters does not apply to a target that rebases on intake at a single chokepoint — that target is structurally immune. Spell that out so future regenerations don't add unnecessary defensive code.
+
 ## Test authority rule
 
 If a test contradicts a prompt, **the test wins.**
@@ -261,6 +267,8 @@ See [PIXEL_PERFECT.md](PIXEL_PERFECT.md) for the full methodology.
 Projects that target multiple languages from one specification extend the base structure with a `parts/targets/<lang>/mapping.md` per target and one `src-<lang>/` directory per language (all gitignored).
 
 The hardest discipline: **every file in `parts/` and `schemas/` must be language-neutral.** No Rust idioms, no C idioms, no Python idioms. Describe data as abstract records, control flow as state machines, errors as named conditions.
+
+Each `parts/targets/<lang>/mapping.md` MUST open with a **Toolchain** section pinning the compiler/interpreter version and the stdlib API surface the mapping relies on (e.g., `rustc 1.89.0`, `zig 0.15.x — uses std.ArrayList.init pre-0.16`). Silent stdlib API breaks across versions are the most common multi-target failure mode; pin explicitly so regeneration on a newer toolchain fails loudly instead of producing subtly broken code.
 
 See [MULTI_TARGET.md](MULTI_TARGET.md) for the full methodology, including the convergent-invention spec-gap signal and the toolchain-pin discipline.
 
