@@ -18,7 +18,21 @@ Any AI agent can generate the code on demand. The code is gitignored. The prompt
 
 ## Proof that this works
 
-We rewrote [npm's semver parser](https://github.com/npm/node-semver) this way:
+We reimplemented [SQLite](https://www.sqlite.org/) from one language-neutral specification into **five** languages at once:
+
+| | [sqlite-leap](https://github.com/safitudo/sqlite-leap) | mainline SQLite |
+|---|---|---|
+| Targets | **C, Rust, Zig, Go, Python** | C |
+| Source LOC (5 targets total) | ~250,000 | ~150,000 |
+| Spec LOC | **~28,000** | n/a (the code is the spec) |
+| Upstream sqllogictest excl-SKIP | **98.88–99.98%** per target | 100% |
+| `exec/mainline` (denominator parity) | 99.93–99.97% on 4 compiled targets | 100% |
+| Crashes on full corpus | **0** across 4 compiled targets | 0 |
+| On-disk byte-identity at fixed fixtures | **5/5 + mainline match** (SHA1) | n/a |
+
+One language-neutral spec, five languages, byte-identical `.db` files at fixed fixtures, full upstream test corpus. Methodology in [MULTI_TARGET.md](MULTI_TARGET.md).
+
+We also did this earlier with [npm's semver parser](https://github.com/npm/node-semver) in a single language, as the original LEAP proof:
 
 | | [semver-leap](https://github.com/safitudo/semver-leap) | node-semver |
 |---|---|---|
@@ -82,9 +96,11 @@ Read [SPEC.md](SPEC.md) for the project structure.
 Read [MANIFESTO.md](MANIFESTO.md) for the philosophy.
 Read [AGENTS.md](AGENTS.md) if you use a non-Claude agent.
 Read [PIXEL_PERFECT.md](PIXEL_PERFECT.md) if you're building UI.
+Read [MULTI_TARGET.md](MULTI_TARGET.md) if you're targeting multiple languages from one spec.
 
 ## Examples
 
+- **[sqlite-leap](https://github.com/safitudo/sqlite-leap)** — SQLite, 5 targets (C, Rust, Zig, Go, Python) from one language-neutral spec, 99.93–99.97% denominator parity on the upstream sqllogictest corpus
 - **[semver-leap](https://github.com/safitudo/semver-leap)** — npm semver parser, 5,632/5,632 tests passing
 - **[todolist-leap](https://github.com/safitudo/todolist-leap)** — the original proof of concept
 

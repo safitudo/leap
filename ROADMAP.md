@@ -2,7 +2,7 @@
 
 > LEAP is experimental by design. This roadmap tracks what we've proven, what we're working on now, and what's genuinely unsolved. It updates as we learn.
 
-**Last updated:** 2026-04-16
+**Last updated:** 2026-05-04
 
 ---
 
@@ -10,6 +10,7 @@
 
 - **Methodology core** — specs + schemas + tests as source, code as generated artifact. Documented in [SPEC.md](./SPEC.md) and [MANIFESTO.md](./MANIFESTO.md).
 - **Library-scale code** — [semver-leap](https://github.com/safitudo/semver-leap) rewrote npm's `node-semver` end-to-end. 717 lines of specs → 2,540 lines of generated code. 5,632 / 5,632 upstream tests passing. Regenerated twice from scratch, both green.
+- **Multi-target / cross-language** — [sqlite-leap](https://github.com/safitudo/sqlite-leap) reimplemented SQLite from one language-neutral spec into **five targets** (C, Rust, Zig, Go, Python) plus a WASM build. ~28K spec → ~250K generated LOC. 98.88–99.98% excl-SKIP on the upstream sqllogictest corpus per target; 4 compiled targets at 99.93–99.97% denominator parity with mainline. SHA1-identical `.db` files at fixed fixtures across all five targets and mainline. Methodology documented in [MULTI_TARGET.md](./MULTI_TARGET.md). This subsumes both the `uuid` cross-language stunt and the `SQLite subset` stretch goal previously listed below, at greater scope than originally proposed.
 - **Agent integration** — [leap-skill](https://github.com/safitudo/leap-skill) encodes the workflow as a Claude Code plugin.
 - **Audit tooling** — [leap-audit](https://github.com/safitudo/leap-audit) provides a 12-dimension scorecard for assessing AI-delivery readiness on any codebase.
 - **Operational stack** — [leap-ops-stack](https://github.com/safitudo/leap-ops-stack) documents the surrounding ops layer (vault, MCP, transcription).
@@ -29,9 +30,7 @@ Each of these is an invitation. If you want to pick one up, open an issue titled
 | `ms` (vercel/ms) | Smallest interesting lib. Fast feedback on LEAP for micro-utilities. | Open |
 | `chalk` | Terminal color library. Tests are visual-ish; will stress the "behavior-describable-as-tests" claim. | Open |
 | `Day.js` / `date-fns` subset | Date math with real-world edge cases (timezones, leap years). Bigger than semver. | Open |
-| `uuid` cross-language | Same specs → generated impl in TS, Go, Rust. Validates agent-agnostic claim. | Open |
 | `lodash` subset (10–20 fns) | Functional utilities. Tests map cleanly. | Open |
-| SQLite subset (core parsing) | Stretch goal. Real systems code. Major stress test. | Later |
 
 **What "success" looks like:** for each port, document lines-of-spec → lines-of-code, test-pass ratio, failure modes encountered, and honest commentary on what was hard.
 

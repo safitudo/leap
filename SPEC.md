@@ -256,6 +256,14 @@ This unlocks:
 
 See [PIXEL_PERFECT.md](PIXEL_PERFECT.md) for the full methodology.
 
+## LEAP for multi-target / cross-language projects
+
+Projects that target multiple languages from one specification extend the base structure with a `parts/targets/<lang>/mapping.md` per target and one `src-<lang>/` directory per language (all gitignored).
+
+The hardest discipline: **every file in `parts/` and `schemas/` must be language-neutral.** No Rust idioms, no C idioms, no Python idioms. Describe data as abstract records, control flow as state machines, errors as named conditions.
+
+See [MULTI_TARGET.md](MULTI_TARGET.md) for the full methodology, including the convergent-invention spec-gap signal and the toolchain-pin discipline.
+
 ## Compliance checklist
 
 A repository is LEAP-compliant if:
@@ -275,9 +283,16 @@ For UI projects, additionally:
 - [ ] `tests/visual/` contains pixel-diff tests for every reference
 - [ ] No DOM snapshot tests or class-name assertions
 
+For multi-target / cross-language projects, additionally:
+
+- [ ] `parts/targets/<lang>/mapping.md` exists for each target, with toolchain version pinned
+- [ ] No language-specific idioms appear in `parts/` or `schemas/`
+- [ ] One `src-<lang>/` per target, all gitignored
+
 ## Version
 
-LEAP Spec v0.2 — April 2026
+LEAP Spec v0.3 — May 2026
 
+- v0.3 — Added multi-target / cross-language extension (`parts/targets/`, language-neutrality rule, [MULTI_TARGET.md](MULTI_TARGET.md)). Validated by [sqlite-leap](https://github.com/safitudo/sqlite-leap).
 - v0.2 — Added UI / frontend extension (design/, visual/interaction/a11y tests)
 - v0.1 — Initial spec
