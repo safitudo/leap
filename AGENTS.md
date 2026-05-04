@@ -45,6 +45,34 @@ When you encounter a LEAP project (has `master.md` at root):
 - **Tests are the authority.** If a test contradicts a prompt, the test wins.
 - **Start immediately** after reading all schemas and parts.
 
+## Operating discipline
+
+These rules govern *how* you work inside a LEAP project. They are derived from production multi-target use (see [MULTI_TARGET.md](MULTI_TARGET.md) and [sqlite-leap](https://github.com/safitudo/sqlite-leap)) and apply to single-target projects too.
+
+### The universal brief suffices
+
+When emitting a leaf part, the canonical brief is `master.md` + the relevant `schemas/` + the part's own `master.md` and `schema.*`. Hand-crafted bespoke prompts that re-explain a part are an anti-pattern — they drift from the spec and become a second source of truth. If the universal brief isn't enough to generate a correct part, the **spec** is what's missing, not the prompt. Fix the spec.
+
+### Convergent invention is a spec gap
+
+When two or more agents (different targets, or different runs of the same target) independently invent the same workaround for a missing piece of the spec, treat the convergence as a **spec bug**, not a target/run bug. Promote the workaround into the spec, then regenerate every sibling part or target. Convergent invention is one of the most reliable bug-class reduction signals in LEAP.
+
+### Generation scope — no auto-invented helpers
+
+Generated code in `src/` must satisfy the schemas and pass the tests. It must NOT invent:
+
+- Inline tests inside `src/` (tests live in `tests/` and are human-authored)
+- Scaffolding for unspecified features ("I'll add a hook for X in case it's needed")
+- TODO stubs or "not implemented" placeholders
+- Helper modules not implied by the schemas
+- Prose comments rationalizing the implementation
+
+If you feel the urge to add one of these, the spec is incomplete — **surface the gap to the user instead of papering over it.**
+
+### Parallel agents on the same target
+
+Do not run two agents emitting into the same target tree concurrently. Either (a) serialize them, or (b) give each a separate worktree and merge their staged outputs afterward. Spec + tests will eventually reconverge them, but the recovery is token-expensive.
+
 ## DO NOT CHEAT
 
 The whole point of LEAP is that AI generates code from prompts, schemas, and tests. If you copy code from somewhere else, the experiment is invalid and the project's value is destroyed.
